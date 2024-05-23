@@ -1,12 +1,17 @@
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Parking {
     private ArrayList<String> matriculas;
+    private HashMap<String, LocalDateTime> entradaTiempos;
     private String nombre;
 
     public Parking(String nombre, int numPlazas) {
         this.nombre = nombre;
         this.matriculas = new ArrayList<>(numPlazas);
+        this.entradaTiempos = new HashMap<>();
         for (int i = 0; i < numPlazas; i++) {
             matriculas.add(null);
         }
@@ -27,6 +32,7 @@ public class Parking {
             throw new ParkingException("Matrícula repetida", matricula);
         }
         matriculas.set(plaza, matricula);
+        entradaTiempos.put(matricula, LocalDateTime.now());
     }
 
     public int salida(String matricula) throws ParkingException {
@@ -35,6 +41,9 @@ public class Parking {
             throw new ParkingException("Matrícula no existente", matricula);
         }
         matriculas.set(plaza, null);
+        LocalDateTime entradaTiempo = entradaTiempos.remove(matricula);
+        Duration duracion = Duration.between(entradaTiempo, LocalDateTime.now());
+        System.out.println("El coche con matrícula " + matricula + " estuvo aparcado durante " + duracion.toMinutes() + " minutos.");
         return plaza;
     }
 

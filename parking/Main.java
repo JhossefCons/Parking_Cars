@@ -1,74 +1,57 @@
-import java.util.Scanner;
+import javax.swing.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
         Parking parking = new Parking("Parking Centro", 10);
 
         while (true) {
-            System.out.println("Menú:");
-            System.out.println("1. Entrada de coche");
-            System.out.println("2. Salida de coche");
-            System.out.println("3. Mostrar parking");
-            System.out.println("4. Salir del programa");
-            System.out.print("Elija una opción: ");
-            
-            int opcion;
-            try {
-                opcion = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Opción no válida. Introduzca un número entre 1 y 4.");
-                continue;
-            }
+            String[] options = {"Entrada de coche", "Salida de coche", "Mostrar parking", "Salir"};
+            int opcion = JOptionPane.showOptionDialog(null, "Seleccione una opción", "Menú",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
             switch (opcion) {
-                case 1:
-                    System.out.print("Introduzca la matrícula del coche: ");
-                    String matriculaEntrada = scanner.nextLine();
-                    System.out.print("Introduzca la plaza: ");
-                    int plazaEntrada;
+                case 0:
+                    String matriculaEntrada = JOptionPane.showInputDialog("Introduzca la matrícula del coche:");
+                    String plazaEntradaStr = JOptionPane.showInputDialog("Introduzca la plaza:");
                     try {
-                        plazaEntrada = Integer.parseInt(scanner.nextLine());
-                    } catch (NumberFormatException e) {
-                        System.out.println("Plaza no válida.");
-                        continue;
-                    }
-
-                    try {
+                        int plazaEntrada = Integer.parseInt(plazaEntradaStr);
                         parking.entrada(matriculaEntrada, plazaEntrada);
-                        System.out.println("Coche aparcado correctamente.");
+                        JOptionPane.showMessageDialog(null, "Coche aparcado correctamente.");
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(null, "Plaza no válida.");
                     } catch (ParkingException e) {
-                        System.out.println("Error: " + e.getMessage() + " - Matrícula: " + e.getMatricula());
+                        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage() + " - Matrícula: " + e.getMatricula());
+                    }
+                    break;
+
+                case 1:
+                    String matriculaSalida = JOptionPane.showInputDialog("Introduzca la matrícula del coche:");
+                    try {
+                        int plazaSalida = parking.salida(matriculaSalida);
+                        JOptionPane.showMessageDialog(null, "Coche retirado de la plaza: " + plazaSalida);
+                    } catch (ParkingException e) {
+                        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage() + " - Matrícula: " + e.getMatricula());
                     }
                     break;
 
                 case 2:
-                    System.out.print("Introduzca la matrícula del coche: ");
-                    String matriculaSalida = scanner.nextLine();
-                    try {
-                        int plazaSalida = parking.salida(matriculaSalida);
-                        System.out.println("Coche retirado de la plaza: " + plazaSalida);
-                    } catch (ParkingException e) {
-                        System.out.println("Error: " + e.getMessage() + " - Matrícula: " + e.getMatricula());
-                    }
+                    JOptionPane.showMessageDialog(null, parking.toString());
                     break;
 
                 case 3:
-                    System.out.println(parking);
+                    JOptionPane.showMessageDialog(null, "Saliendo del programa.");
+                    System.exit(0);
                     break;
 
-                case 4:
-                    System.out.println("Saliendo del programa.");
-                    scanner.close();
-                    return;
-
                 default:
-                    System.out.println("Opción no válida. Introduzca un número entre 1 y 4.");
+                    JOptionPane.showMessageDialog(null, "Opción no válida. Introduzca un número entre 1 y 4.");
             }
 
-            System.out.println("Plazas totales: " + parking.getPlazasTotales());
-            System.out.println("Plazas ocupadas: " + parking.getPlazasOcupadas());
-            System.out.println("Plazas libres: " + parking.getPlazasLibres());
+            JOptionPane.showMessageDialog(null, "Plazas totales: " + parking.getPlazasTotales() +
+                    "\nPlazas ocupadas: " + parking.getPlazasOcupadas() +
+                    "\nPlazas libres: " + parking.getPlazasLibres());
         }
     }
 }
